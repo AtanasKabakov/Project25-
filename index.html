@@ -55,9 +55,12 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      gap: 15px;
       background: #d0e8ff;
       border-radius: 12px;
       box-shadow: 0 0 10px #a0c4ff;
+      flex-wrap: wrap;
+      padding: 15px;
     }
     .car-gif {
       max-width: 180px;
@@ -116,16 +119,16 @@ is_electric(X).
     session.consult(knowledge);
 
     const carAnimations = {
-      bmw: '<img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExczJ5dDV5M24zZGc2Yzh4bG52NHdxb2R1ZDBiYTN1b2w2cTh4NHdibyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/twXer9ExHdTvwt2vpt/giphy.webp" alt="BMW анимация" />',
+      bmw: '<img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExczJ5dDV5M24zZGc2Yzh4bG52NHdxb2R1ZDBiYTN1b2w2cTh4NHdibyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/twXer9ExHdTvwt2vpt/giphy.webp" alt="BMW анимация" class="car-gif" />',
       lamborghini: '<img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExOW9peGw3anhlOGRkaG42bWlpbXhwZXI4NjRweTQxeGI2eGQyOXJsMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5l3lJzA8zVMqc/giphy.gif" class="car-gif" alt="Lamborghini анимация" />',
       ferrari: '<img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjd1cDQ1bndmNHdwNzBuaDE0MmhlMm02bXNlOG4wMDc4ZGlqbmRjeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TeXVQ0AFBukqA/giphy.gif" class="car-gif" alt="Ferrari анимация" />',
-      tesla: '<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3BhOXE2eXAzaW1ic29pcGhwMzRyYXdtbGxuZGZjam5vZTdwdDlkaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/darAMUceRAs0w/200.webp" alt="Tesla анимация" />',
+      tesla: '<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3BhOXE2eXAzaW1ic29pcGhwMzRyYXdtbGxuZGZjam5vZTdwdDlkaCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/darAMUceRAs0w/200.webp" alt="Tesla анимация" class="car-gif" />',
       porsche: '<img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExMWc3ZHQ5eGNyZzR1NDd5cnFiN2pwN3FhZXR6eDU4aWZmZ3dsNWNvNCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/tdqdc71dYWHyaU4E1f/giphy.gif" class="car-gif" alt="Porsche анимация" />',
       mustang: '<img src="https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExajcyNTF5c2RobGxkcjh3czhqZDRhNXlzbDZtbHlkeHozZmVyaThpOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4M0cXNjEE8LLJaApOD/giphy.gif" class="car-gif" alt="Mustang анимация" />'
     };
 
     function runProlog() {
-      const input = document.getElementById("prolog-input").value;
+      const input = document.getElementById("prolog-input").value.trim();
       const resultDiv = document.getElementById("result");
       const animDiv = document.getElementById("car-animation");
 
@@ -133,25 +136,25 @@ is_electric(X).
       animDiv.innerHTML = "";
 
       session.query(input);
+
+      const carsFound = new Set();
+
       session.answers(answer => {
         if(answer === false) {
-          resultDiv.innerHTML += `<p>Няма повече резултати.</p>`;
+          if(carsFound.size === 0) {
+            resultDiv.innerHTML = "<p>Няма резултати за тази заявка.</p>";
+          }
           return;
         }
         const str = pl.format_answer(answer);
-        if (str === "false.") {
-          resultDiv.innerHTML = "<p>Няма резултати за тази заявка.</p>";
-          return;
-        }
         resultDiv.innerHTML += `<p>${str}</p>`;
 
         const match = str.match(/X = (\w+)/);
-        if (match) {
+        if(match) {
           const car = match[1].toLowerCase();
-          if (carAnimations[car]) {
-            animDiv.innerHTML = carAnimations[car];
-          } else {
-            animDiv.innerHTML = "<p>Няма GIF за тази кола.</p>";
+          if(carAnimations[car] && !carsFound.has(car)) {
+            carsFound.add(car);
+            animDiv.innerHTML += carAnimations[car];
           }
         }
       });
