@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Prolog коли с различни правила и GIF</title>
+  <title>Prolog коли с правила и GIF</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -49,7 +49,7 @@
       font-weight: bold;
       color: #004a99;
     }
-    .animal-container {
+    .car-container {
       margin-top: 30px;
       min-height: 160px;
       display: flex;
@@ -59,7 +59,7 @@
       border-radius: 12px;
       box-shadow: 0 0 10px #a0c4ff;
     }
-    .animal-gif {
+    .car-gif {
       max-width: 180px;
       border-radius: 12px;
       box-shadow: 0 0 10px #005f99;
@@ -67,29 +67,15 @@
   </style>
 </head>
 <body>
-  <h1>Задание: Приложение на Prolog за коли</h1>
+  <h1>Prolog: Коли с различни правила и GIF анимации</h1>
 
-  <p class="instructions">
-    Имате задача да създадете малко приложение, което използва <strong>Пролог</strong> за логическо извеждане на животни.  
-    След като въведете Prolog заявка, програмата ще търси резултат и ако открие животно, ще покаже подходяща анимирана GIF картинка.  
-    <br><br>
-    <strong>Как да добавите собствен Prolog код?</strong><br>
-    - В кода в променливата <code>knowledge</code> можете да добавяте нови животни и правила.<br>
-    - Например: <code>animal(elephant).</code> и съответно правила като <code>is_mammal(X) :- animal(X).</code><br>
-    <br>
-    <strong>Как да добавите нови GIF изображения?</strong><br>
-    - Намерете подходящ анимиран GIF в интернет (например в <a href="https://giphy.com" target="_blank">Giphy</a> или друг сайт).<br>
-    - Копирайте директния линк към GIF файла.<br>
-    - Добавете нов запис в обекта <code>animalAnimations</code> с името на животното и HTML за картинката, например:<br>
-    <code>elephant: '&lt;img src="your_gif_link.gif" class="animal-gif" alt="Elephant" /&gt;'</code><br>
-    - Не забравяйте да добавите и животното в Prolog базата.<br>
+  <p>
+    Въведи Prolog заявка като:<br>
+    <code>is_sedan(X).</code> или <code>is_electric(X).</code>
   </p>
 
-
-  <h1>Prolog животни с различни правила и GIF</h1>
-
   <textarea id="prolog-input">
-% Примери на заявки:
+% Примери:
 is_sedan(X).
 is_big(X).
 is_electric(X).
@@ -97,40 +83,40 @@ is_electric(X).
   <button onclick="runProlog()">Изпълни</button>
 
   <div id="result"></div>
-  <div class="animal-container" id="animal-animation"></div>
+  <div class="car-container" id="car-animation"></div>
 
   <script src="https://unpkg.com/tau-prolog"></script>
   <script>
     const session = pl.create();
 
-    // Разширена база знания с животни и правила
+    // Prolog база знания за коли
     const knowledge = `
-      car(ford).
-car(Mercedes-Benz).
-car(BMW).
+      car(bmw).
+      car(tesla).
+      car(porsche).
+      car(ferrari).
+      car(mustang).
+      car(lamborghini).
 
-% Козина (бозайници)
-sedan(BMW).
+      sedan(bmw).
+      electric(tesla).
+      big(mustang).
+      fast(ferrari).
+      luxury(porsche).
+      supercar(lamborghini).
 
-
-% Големи животни
-big(Mercedes-Benz).
-
-% Хищници
-
-electric(ford).
-
-% Правила
-is_sedan(X) :- sedan(X).
-is_big(X) :- big(X).
-is_electric(X) :- electric(X).
-
+      is_sedan(X) :- sedan(X).
+      is_electric(X) :- electric(X).
+      is_big(X) :- big(X).
+      is_fast(X) :- fast(X).
+      is_luxury(X) :- luxury(X).
+      is_supercar(X) :- supercar(X).
     `;
 
     session.consult(knowledge);
 
-    const animalAnimations = {
-        bmw: '<img src="https://media.giphy.com/media/xUOxeZ7Z9YM8fL4nO0/giphy.gif" class="car-gif" alt="BMW анимация" />',
+    const carAnimations = {
+      bmw: '<img src="https://media.giphy.com/media/xUOxeZ7Z9YM8fL4nO0/giphy.gif" class="car-gif" alt="BMW анимация" />',
       lamborghini: '<img src="https://media.giphy.com/media/3o6ZtpxSZbQRRnwCKQ/giphy.gif" class="car-gif" alt="Lamborghini анимация" />',
       ferrari: '<img src="https://media.giphy.com/media/vcQZ1l5xKxF44/giphy.gif" class="car-gif" alt="Ferrari анимация" />',
       tesla: '<img src="https://media.giphy.com/media/h4OGaQwOZLmrq/giphy.gif" class="car-gif" alt="Tesla анимация" />',
@@ -141,7 +127,7 @@ is_electric(X) :- electric(X).
     function runProlog() {
       const input = document.getElementById("prolog-input").value;
       const resultDiv = document.getElementById("result");
-      const animDiv = document.getElementById("animal-animation");
+      const animDiv = document.getElementById("car-animation");
 
       resultDiv.innerHTML = "";
       animDiv.innerHTML = "";
@@ -161,16 +147,15 @@ is_electric(X) :- electric(X).
 
         const match = str.match(/X = (\w+)/);
         if (match) {
-          const animal = match[1];
-          if (animalAnimations[animal]) {
-            animDiv.innerHTML = animalAnimations[animal];
+          const car = match[1].toLowerCase();
+          if (carAnimations[car]) {
+            animDiv.innerHTML = carAnimations[car];
           } else {
-            animDiv.innerHTML = "<p>Няма GIF за това животно.</p>";
+            animDiv.innerHTML = "<p>Няма GIF за тази кола.</p>";
           }
         }
       });
     }
   </script>
-
 </body>
 </html>
